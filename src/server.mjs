@@ -66,16 +66,19 @@ templatesRouter.delete('/:templateId', templates.deletePomodoroTemplate);
 statisticsRouter.use(verifyJwtToken);
 statisticsRouter.get('/report/weekly/:userId', statistics.getWeeklyStatistics);
 
+devicesRouter.use(verifyJwtToken);
 devicesRouter.post('/:userId', devices.createDevice);
 devicesRouter.get('/:userId', devices.getDevices);
 devicesRouter.put('/:userId/devices/:deviceId', devices.updateDevice);
 devicesRouter.delete('/:userId/devices/:deviceId', devices.deleteDevice);
 
+settingsRouter.use(verifyJwtToken);
 settingsRouter.get('/:userId', settings.getUserSettings);
 settingsRouter.get('/:userId', settings.createUserSettings);
 settingsRouter.put('/:settingsId', settings.updateUserSettings);
 settingsRouter.delete('/:settingsId', settings.deleteUserSettings);
 
+usersRouter.use(verifyJwtToken);
 usersRouter.get('/', authorizeForAdminOnly, users.getAllUsers);
 usersRouter.get('/:userId', authorizeForAdminOnly, users.getUser);
 usersRouter.post('/', authorizeForAdminOnly, users.createUser);

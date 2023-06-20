@@ -81,4 +81,4 @@ export const authorizeFor = (requiredRoles) => async (req, res, next) => {
 };
 
 export const authorizeForAdminOnly = authorizeFor(['admin']);
-export const authorizeForUser = authorizeFor(['user']);
+export const authorizeForUser = authorizeFor(['user', 'admin']);
