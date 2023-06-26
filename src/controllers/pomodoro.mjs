@@ -70,18 +70,13 @@ export async function createPomodoro(req, res) {
 export async function createPomodoroFromTemplate(req, res) {
     try {
         const { userId, templateId } = req.params;
-        const { task } = req.body;
-
-        if (!task) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
 
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const pomodoro = await Pomodoro.createFromTemplate(templateId, task);
+        const pomodoro = await Pomodoro.createFromTemplate(templateId);
 
         res.status(201).json({ pomodoro });
     } catch (err) {

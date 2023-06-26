@@ -31,34 +31,33 @@ const pomodoroSchema = new mongoose.Schema({
     },
 }, {
     statics: {
-        createFromTemplate(templateId, task) {
-            return PomodoroTemplate.findById(templateId)
-                .then((template) => {
-                    if (!template) {
-                        throw new Error('Invalid template ID');
-                    }
+        createFromTemplate(templateId) {
+            return PomodoroTemplate.findById(templateId).then((template) => {
+                if (!template) {
+                    throw new Error('Invalid template ID');
+                }
 
-                    const pomodoro = new this({
-                        task: task,
-                        duration: template.durationMins,
-                        user: template.user,
-                    });
-
-                    return pomodoro.save();
+                const pomodoro = new this({
+                    task: template.name,
+                    durationMins: template.durationMins,
+                    user: template.user,
                 });
+
+                return pomodoro.save();
+            });
         }
     }
 });
 
 pomodoroSchema.virtual('timeLeftMins').get(function () {
-    const diffMs = this.stopTime - this.startTime;
-    const diffMins = diffMs * 60_000;
+    const diffMs = this.durationMins - (this.stopTime - this.startTime) / 60000;
+    const diffMins = diffMs;
 
     return diffMins;
 });
 
 pomodoroSchema.virtual('finishedEarlier').get(function () {
-    return this.timeLeftMins === 0;
+    return this.timeLeftMins > 1;
 });
 
 pomodoroSchema.virtual('isValid').get(function () {
@@ -68,6 +67,17 @@ pomodoroSchema.virtual('isValid').get(function () {
     return false;
 });
 
-pomodoroSchema.options.toJSON = defaultJSONConvert;
+pomodoroSchema.options.toJSON = {
+    transform: function (doc, ret, options) {
+        ret.id = ret._id;
+        delete ret._id;
+        delete ret.__v;
+        
+        ret.timeLeftMins = doc.timeLeftMins;
+        ret.finishedEarlier = doc.finishedEarlier;
+        ret.isValid = doc.isValid;
+        return ret;
+    },
+};
 
 export const Pomodoro = mongoose.model('Pomodoro', pomodoroSchema);

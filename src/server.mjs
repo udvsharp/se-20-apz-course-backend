@@ -5,7 +5,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import { dbUri, dbOptions, appPort } from './constants.mjs';
-import { verifyJwtToken, authorizeForAdminOnly } from './middleware/auth.mjs';
+import { verifyJwtToken, authorizeForAdminOnly, authorizeForUser } from './middleware/auth.mjs';
 import * as auth from './controllers/auth.mjs';
 
 import * as pomodoro from './controllers/pomodoro.mjs';
@@ -47,6 +47,7 @@ authRouter.post('/register', auth.register);
 authRouter.post('/login', auth.login);
 
 pomodoroRouter.use(verifyJwtToken);
+pomodoroRouter.use(authorizeForUser);
 pomodoroRouter.get('/:userId', pomodoro.getAllPomodoros);
 pomodoroRouter.get('/:userId/valid', pomodoro.getAllValidPomodoros);
 pomodoroRouter.get('/:userId/used', pomodoro.getAllUsedPomodoros);
@@ -58,21 +59,25 @@ pomodoroRouter.post('/:pomodoroId/start', pomodoro.startPomodoro);
 pomodoroRouter.post('/:pomodoroId/stop', pomodoro.stopPomodoro);
 
 templatesRouter.use(verifyJwtToken);
+templatesRouter.use(authorizeForUser);
 templatesRouter.get('/:userId', templates.getAllPomodoroTemplates);
 templatesRouter.post('/:userId', templates.createPomodoroTemplate);
 templatesRouter.put('/:templateId', templates.updatePomodoroTemplate);
 templatesRouter.delete('/:templateId', templates.deletePomodoroTemplate);
 
 statisticsRouter.use(verifyJwtToken);
+statisticsRouter.use(authorizeForUser);
 statisticsRouter.get('/report/weekly/:userId', statistics.getWeeklyStatistics);
 
 devicesRouter.use(verifyJwtToken);
+devicesRouter.use(authorizeForUser);
 devicesRouter.post('/:userId', devices.createDevice);
 devicesRouter.get('/:userId', devices.getDevices);
 devicesRouter.put('/:userId/devices/:deviceId', devices.updateDevice);
 devicesRouter.delete('/:userId/devices/:deviceId', devices.deleteDevice);
 
 settingsRouter.use(verifyJwtToken);
+settingsRouter.use(authorizeForUser);
 settingsRouter.get('/:userId', settings.getUserSettings);
 settingsRouter.get('/:userId', settings.createUserSettings);
 settingsRouter.put('/:settingsId', settings.updateUserSettings);
@@ -80,10 +85,10 @@ settingsRouter.delete('/:settingsId', settings.deleteUserSettings);
 
 usersRouter.use(verifyJwtToken);
 usersRouter.get('/', authorizeForAdminOnly, users.getAllUsers);
-usersRouter.get('/:userId', authorizeForAdminOnly, users.getUser);
-usersRouter.post('/', authorizeForAdminOnly, users.createUser);
-usersRouter.put('/:userId', authorizeForAdminOnly, users.updateUser);
-usersRouter.delete('/:userId', authorizeForAdminOnly, users.deleteUser);
+usersRouter.get('/:userId', authorizeForUser, users.getUser);
+usersRouter.post('/', authorizeForUser, users.createUser);
+usersRouter.put('/:userId', authorizeForUser, users.updateUser);
+usersRouter.delete('/:userId', authorizeForUser, users.deleteUser);
 
 app.use('/api/auth', authRouter);
 app.use('/api/pomodoro', pomodoroRouter);

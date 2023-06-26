@@ -10,7 +10,7 @@ async function getSessionForUser(user) {
 
     const existingSession = await Session.findOne({ userId: user._id });
     if (!existingSession) {
-        token = jwt.sign({ userId: user._id }, secretKey);
+        token = jwt.sign({ userId: user.id }, secretKey);
     
         const newSession = new Session({ userId: user._id, token });
         await newSession.save();
