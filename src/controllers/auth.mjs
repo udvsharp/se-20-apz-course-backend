@@ -8,11 +8,11 @@ import { secretKey } from '../constants.mjs';
 async function getSessionForUser(user) {
     let token;
 
-    const existingSession = await Session.findOne({ userId: user._id });
+    const existingSession = await Session.findOne({ userId: user.id });
     if (!existingSession) {
         token = jwt.sign({ userId: user.id }, secretKey);
     
-        const newSession = new Session({ userId: user._id, token });
+        const newSession = new Session({ userId: user.id, token });
         await newSession.save();
     } else {
         token = existingSession.token;
