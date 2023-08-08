@@ -11,4 +11,4 @@ export const dbUri = `${mongoDbUri}/${dbName}`;
 export const dbOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 
 // App
-export const appPort = process.env.APP_PORT || 3000;
+export const appPort = process.env.PORT || 3000;
