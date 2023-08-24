@@ -3,6 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import mongoose from 'mongoose';
+import cors from 'cors';
 
 import { dbUri, dbOptions, appPort } from './constants.mjs';
 import { verifyJwtToken, authorizeForAdminOnly, authorizeForUser } from './middleware/auth.mjs';
@@ -17,6 +18,7 @@ import * as users from './controllers/users.mjs';
 
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
