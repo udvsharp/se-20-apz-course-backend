@@ -1,9 +1,12 @@
 import process from 'process';
 import crypto from 'crypto';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Auth
 export const secretKey = process.env.JWT_SECRET_KEY || crypto.randomBytes(32).toString('hex');
 export const mongoDbUri = process.env.MONGODB_URI;
+
 
 // DB
 export const dbName = 'prodef-db';
